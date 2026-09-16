@@ -1,0 +1,127 @@
+{
+  "name": "AI Lead Qualification - Demo",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-848, 272],
+      "id": "95e68386-922d-4b1e-a451-65ae62f382e6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {"id":"c247660d-d18a-42fd-968a-37f7826a03ea","name":"name","value":"John Smith","type":"string"},
+            {"id":"ce2b62db-ed82-476d-931e-c7a85ba7a8af","name":"email","value":"john@example.com","type":"string"},
+            {"id":"68d1d622-8865-4898-a1aa-8b227e099725","name":"company","value":"Smith Roofing","type":"string"},
+            {"id":"d2d2dd20-99e7-4516-9e86-05a2371a7b3a","name":"budget","value":"$5,000","type":"string"},
+            {"id":"cda3b07d-68a3-4818-8b22-36f3915f2d6f","name":"service_needed","value":"AI sales automation","type":"string"},
+            {"id":"209a5fd8-10f2-49a5-ac30-731684530017","name":"notes","value":"Wants to automate lead follow-up and schedule a call this week.","type":"string"}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [-608, 272],
+      "id": "fe98c727-1214-4ebf-b642-898e87bcaa73",
+      "name": "Sample Lead"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive":true,"leftValue":"","typeValidation":"strict","version":3},
+          "conditions": [{
+            "id":"811c8507-1d2c-4ef9-a657-9d55edb2bbf1",
+            "leftValue":"={{ $('Message a model1').item.json.output[0].content[0].text.priority }}",
+            "rightValue":"High",
+            "operator":{"type":"string","operation":"equals","name":"filter.operator.equals"}
+          }],
+          "combinator":"and"
+        },
+        "options": {}
+      },
+      "type":"n8n-nodes-base.if",
+      "typeVersion":2.3,
+      "position":[192,272],
+      "id":"44a3ca6d-66fe-4506-a2eb-3b5f9ebda62b",
+      "name":"If High Priority"
+    },
+    {
+      "parameters": {
+        "modelId":{"__rl":true,"value":"gpt-5.6-sol","mode":"list","cachedResultName":"GPT-5.6-SOL"},
+        "responses":{"values":[{"content":"=You are qualifying a sales lead.\n\nReview the lead information below and classify the lead as High, Medium, or Low priority.\n\nLead:\nName: {{$json.name}}\nEmail: {{$json.email}}\nCompany: {{$json.company}}\nBudget: {{$json.budget}}\nService Needed: {{$json.service_needed}}\nNotes: {{$json.notes}}\n\nUse these rules:\n\n* High: strong need, realistic budget, and clear buying intent\n* Medium: potentially qualified but missing information or urgency\n* Low: poor fit, very low budget, or little buying intent\n\nReturn the structured result with:\n- priority\n- reason\n- recommended_action\n"}]},
+        "builtInTools":{},
+        "options":{"textFormat":{"textOptions":{"type":"json_schema","name":"lead_qualification","schema":"{\"type\":\"object\",\"properties\":{\"priority\":{\"type\":\"string\",\"enum\":[\"High\",\"Medium\",\"Low\"]},\"reason\":{\"type\":\"string\"},\"recommended_action\":{\"type\":\"string\"}},\"required\":[\"priority\",\"reason\",\"recommended_action\"],\"additionalProperties\":false}","description":"Qualifies a sales lead and returns its priority, reasoning, and recommended next action.","strict":true}}}
+      },
+      "type":"@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion":2.3,
+      "position":[-352,272],
+      "id":"154c8157-3011-4aaa-8171-41a0c9d8f665",
+      "name":"Message a model1"
+    },
+    {
+      "parameters": {
+        "operation":"append",
+        "documentId":{"__rl":true,"value":"","mode":"list","cachedResultName":"Select n8n Lead Qualification Demo"},
+        "sheetName":{"__rl":true,"value":"","mode":"list","cachedResultName":"Select Qualified Leads"},
+        "columns":{
+          "mappingMode":"defineBelow",
+          "value":{
+            "Name":"={{ $('Sample Lead').item.json.name }}",
+            "Email":"={{ $('Sample Lead').item.json.email }}",
+            "Company":"={{ $('Sample Lead').item.json.company }}",
+            "Budget":"={{ $('Sample Lead').item.json.budget }}",
+            "Priority":"={{ $json.output[0].content[0].text.priority }}",
+            "Reason":"={{ $json.output[0].content[0].text.reason }}",
+            "Recommended Action":"={{ $json.output[0].content[0].text.recommended_action }}"
+          },
+          "matchingColumns":[],
+          "schema":[
+            {"id":"Name","displayName":"Name","required":false,"defaultMatch":false,"display":true,"type":"string","canBeUsedToMatch":true},
+            {"id":"Email","displayName":"Email","required":false,"defaultMatch":false,"display":true,"type":"string","canBeUsedToMatch":true},
+            {"id":"Company","displayName":"Company","required":false,"defaultMatch":false,"display":true,"type":"string","canBeUsedToMatch":true},
+            {"id":"Budget","displayName":"Budget","required":false,"defaultMatch":false,"display":true,"type":"string","canBeUsedToMatch":true},
+            {"id":"Priority","displayName":"Priority","required":false,"defaultMatch":false,"display":true,"type":"string","canBeUsedToMatch":true},
+            {"id":"Reason","displayName":"Reason","required":false,"defaultMatch":false,"display":true,"type":"string","canBeUsedToMatch":true},
+            {"id":"Recommended Action","displayName":"Recommended Action","required":false,"defaultMatch":false,"display":true,"type":"string","canBeUsedToMatch":true}
+          ],
+          "attemptToConvertTypes":false,
+          "convertFieldsToString":false
+        },
+        "options":{}
+      },
+      "type":"n8n-nodes-base.googleSheets",
+      "typeVersion":4.7,
+      "position":[-80,272],
+      "id":"7f03decf-2d04-4004-b31a-94a8e413467d",
+      "name":"Append row in sheet1"
+    },
+    {
+      "parameters": {
+        "resource":"draft",
+        "subject":"Following up about your AI sales automation",
+        "message":"=Hi {{ $(\"Sample Lead\").item.json.name }},\n\nThanks for your interest in AI sales automation for {{ $(\"Sample Lead\").item.json.company }}. Based on what you shared, I’d like to learn a little more about your current lead follow-up process and where the biggest bottlenecks are.\n\nWould you be available for a short call this week to discuss what you’d like to automate and what a useful solution would look like?\n\nBest,\nJeff",
+        "options":{"sendTo":"={{ $('Sample Lead').item.json.email }}"}
+      },
+      "type":"n8n-nodes-base.gmail",
+      "typeVersion":2.2,
+      "position":[448,192],
+      "id":"d9e115ce-8fd2-45a0-aef9-0a9eb5a18646",
+      "name":"Create a draft1"
+    }
+  ],
+  "pinData":{},
+  "connections":{
+    "When clicking ‘Execute workflow’":{"main":[[{"node":"Sample Lead","type":"main","index":0}]]},
+    "Sample Lead":{"main":[[{"node":"Message a model1","type":"main","index":0}]]},
+    "If High Priority":{"main":[[{"node":"Create a draft1","type":"main","index":0}]]},
+    "Message a model1":{"main":[[{"node":"Append row in sheet1","type":"main","index":0}]]},
+    "Append row in sheet1":{"main":[[{"node":"If High Priority","type":"main","index":0}]]}
+  },
+  "active":false,
+  "settings":{"executionOrder":"v1"},
+  "tags":[]
+}
