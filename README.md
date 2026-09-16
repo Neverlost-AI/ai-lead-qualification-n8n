@@ -10,8 +10,6 @@ The successful path was executed in n8n after import and credential reconnection
 
 `Manual Trigger → Sample Lead → AI Classification → Google Sheets → High-Priority Check → Gmail Draft`
 
-A screenshot from that successful execution is included at `docs/screenshots/live-success.png`.
-
 ## What the workflow demonstrates
 
 - n8n workflow orchestration
@@ -73,7 +71,7 @@ Run:
 python scripts/validate_workflow.py
 ```
 
-This performs static checks on the public export. Live external execution was separately completed in n8n; see `docs/verification.md`.
+This performs static checks on the public export. The same cleaned workflow was also imported into n8n, reconnected to the external services, and executed successfully end to end. See `docs/verification.md`.
 
 ## Scope
 
