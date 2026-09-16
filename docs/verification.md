@@ -16,9 +16,7 @@ Observed in the successful run:
 - the `High` branch evaluated true;
 - Gmail created one draft.
 
-The execution screenshot is stored at:
-
-`docs/screenshots/live-success.png`
+The public repository records the verified execution outcome without publishing account UI or credential-linked screenshots.
 
 ## Public-export sanitation
 
