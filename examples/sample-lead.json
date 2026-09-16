@@ -1,0 +1,8 @@
+{
+  "name": "John Smith",
+  "email": "john@example.com",
+  "company": "Smith Roofing",
+  "budget": "$5,000",
+  "service_needed": "AI sales automation",
+  "notes": "Wants to automate lead follow-up and schedule a call this week."
+}
